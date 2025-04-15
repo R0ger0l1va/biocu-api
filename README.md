@@ -101,3 +101,18 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 ## .ENV
 
 DATABASE_URL="postgresql://postgres:hola@localhost:5432/biocu_database"
+
+## POST/reports para prueba
+
+{
+  "titulo": "Reporte con imágenes",
+  "direccion": "Calle Ejemplo 123",
+  "descripcion": "Descripción con imágenes base64",
+  "latitud": "19.4326018",
+  "longitud": "-99.1332049",
+  "usuario_id": "550e8400-e29b-41d4-a716-446655440000",
+  "imagenes": [
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ...",
+    "data:image/png;base64,iVBORw0KGgoAAAAN..."
+  ]
+}

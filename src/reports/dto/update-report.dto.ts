@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsOptional,
@@ -6,8 +5,9 @@ import {
   IsLatitude,
   IsLongitude,
   MaxLength,
-  IsUrl,
   IsIn,
+  IsBase64,
+  IsArray,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 
@@ -66,14 +66,15 @@ export class UpdateReportDto {
   longitud?: string;
 
   @ApiProperty({
-    description: 'URL de la imagen del reporte',
-    example: 'https://ejemplo.com/bache-reparado.jpg',
+    description: 'Imágenes en formato base64',
+    example: ['data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ...'],
+    type: [String],
     required: false,
   })
   @IsOptional()
-  @IsUrl()
-  @MaxLength(255)
-  imagen_url?: string;
+  @IsArray()
+  @IsBase64({}, { each: true })
+  imagenes?: string[];
 
   @ApiProperty({
     description: 'Estado del reporte',

@@ -1,19 +1,28 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ReporteEntity } from './entities/report.entity';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
+import { FileService } from 'src/file/file.service';
 
 @Injectable()
 export class ReportsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly fileService: FileService,
+  ) {}
 
-  create(createReportDto: CreateReportDto): Promise<ReporteEntity> {
+  async create(createReportDto: CreateReportDto): Promise<ReporteEntity> {
+    let images: string[] = [];
+
+    if (createReportDto.imagenes && createReportDto.imagenes.length > 0) {
+      images = await this.fileService.saveUserImages(
+        createReportDto.usuario_id,
+        createReportDto.imagenes,
+      );
+    }
     return this.prisma.reportes.create({
       data: {
         titulo: createReportDto.titulo,
@@ -21,7 +30,7 @@ export class ReportsService {
         descripcion: createReportDto.descripcion,
         latitud: parseFloat(createReportDto.latitud),
         longitud: parseFloat(createReportDto.longitud),
-        imagen_url: createReportDto.imagen_url,
+        imagenes: images,
         usuario_id: createReportDto.usuario_id,
         estado: 'sin_revisar', // Estado por defecto
       },
@@ -44,8 +53,8 @@ export class ReportsService {
     });
   }
 
-  findOne(id: string): Promise<ReporteEntity | null> {
-    const reporte = this.prisma.reportes.findUnique({
+  async findOne(id: string): Promise<ReporteEntity | null> {
+    const reporte = await this.prisma.reportes.findUnique({
       where: { id },
       include: {
         usuarios: {
@@ -82,7 +91,7 @@ export class ReportsService {
         longitud: updateReportDto.longitud
           ? parseFloat(updateReportDto.longitud)
           : undefined,
-        imagen_url: updateReportDto.imagen_url,
+        imagenes: updateReportDto.imagenes,
       },
     });
   }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
@@ -9,7 +8,7 @@ import {
   IsOptional,
 } from 'class-validator';
 
-export class CreateUserDto {
+export class RegisterUserDTO {
   @ApiProperty({
     description: 'Nombre completo del usuario',
     example: 'Juan Pérez',
@@ -46,8 +45,7 @@ export class CreateUserDto {
     example: false,
     default: false,
   })
-  @IsString()
-  @IsNotEmpty()
   @IsOptional()
+  @IsNotEmpty()
   role: string;
 }

@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
   ConflictException,
@@ -23,28 +20,13 @@ export class UsersService {
   private readonly SALT_ROUNDS = 10;
 
   async create(createUserDto: CreateUserDto): Promise<UsuarioEntity> {
-    // Verificar si el email ya existe
-    const existingUser = await this.prisma.usuarios.findUnique({
-      where: { email: createUserDto.email },
-    });
-
-    if (existingUser) {
-      throw new ConflictException('El email ya está registrado');
-    }
-
-    // Hash de la contraseña
-    const hashedPassword = await bcrypt.hash(
-      createUserDto.password_hash,
-      this.SALT_ROUNDS,
-    );
-
     try {
       return await this.prisma.usuarios.create({
         data: {
           nombre: createUserDto.nombre,
           email: createUserDto.email,
-          password_hash: hashedPassword,
-          es_admin: createUserDto.es_admin || false,
+          password_hash: createUserDto.password_hash,
+          role: createUserDto.role,
         },
       });
     } catch (error) {
