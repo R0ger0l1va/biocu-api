@@ -1,8 +1,14 @@
-/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Body,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ReportsService } from './reports.service';
 import { CreateReportDto } from './dto/create-report.dto';
-import { ReporteEntity } from './entities/report.entity';
 import {
   ApiTags,
   ApiOperation,
@@ -13,6 +19,7 @@ import {
   ApiOkResponse,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
+import { UpdateReportDto } from './dto/update-report.dto';
 
 @ApiTags('Reports') // Agrupa todos los endpoints bajo el tag 'Reports'
 @Controller('reports')
@@ -32,7 +39,7 @@ export class ReportsController {
     status: 400,
     description: 'Datos de entrada inválidos',
   })
-  create(@Body() createReportDto: CreateReportDto): Promise<ReporteEntity> {
+  create(@Body() createReportDto: CreateReportDto) {
     return this.reportsService.create(createReportDto);
   }
 
@@ -41,8 +48,14 @@ export class ReportsController {
   @ApiOkResponse({
     description: 'Lista de reportes obtenida exitosamente',
   })
-  findAll(): Promise<ReporteEntity[]> {
+  findAll() {
     return this.reportsService.findAll();
+  }
+
+  // En tu controlador
+  @Get(':id/reportes')
+  getUserReports(@Param('id') userId: string) {
+    return this.reportsService.findByUser(userId);
   }
 
   @Get(':id')
@@ -58,8 +71,29 @@ export class ReportsController {
   @ApiNotFoundResponse({
     description: 'Reporte no encontrado',
   })
-  findOne(@Param('id') id: string): Promise<ReporteEntity | null> {
+  findOne(@Param('id') id: string) {
     return this.reportsService.findOne(id);
+  }
+
+  @ApiOperation({ summary: 'Actualizar un reporte por ID' })
+  @ApiBody({
+    type: CreateReportDto,
+    description: 'Datos necesarios para crear un nuevo reporte',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del reporte a actualizar',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiOkResponse({
+    description: 'Reporte actualizado exitosamente',
+  })
+  @ApiNotFoundResponse({
+    description: 'Reporte no encontrado',
+  })
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateReportDto: UpdateReportDto) {
+    return this.reportsService.update(id, updateReportDto);
   }
 
   @Delete(':id')
@@ -75,7 +109,7 @@ export class ReportsController {
   @ApiNotFoundResponse({
     description: 'Reporte no encontrado',
   })
-  remove(@Param('id') id: string): Promise<ReporteEntity> {
+  remove(@Param('id') id: string) {
     return this.reportsService.remove(id);
   }
 }

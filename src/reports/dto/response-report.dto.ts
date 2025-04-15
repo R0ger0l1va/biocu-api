@@ -1,61 +1,40 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsString,
-  IsLatitude,
-  IsLongitude,
-  MaxLength,
-  IsOptional,
-  IsUrl,
-} from 'class-validator';
-import { Transform } from 'class-transformer';
 
-export class CreateReportDto {
+export class ReportResponseDto {
+  @ApiProperty({
+    description: 'ID único del reporte',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  id: string;
+
   @ApiProperty({
     description: 'Título del reporte',
     example: 'Bache en calle principal',
-    maxLength: 100,
   })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(100)
   titulo: string;
 
   @ApiProperty({
     description: 'Dirección exacta del problema',
     example: 'Calle Principal 123, Colonia Centro',
-    maxLength: 255,
   })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(255)
   direccion: string;
 
   @ApiProperty({
     description: 'Descripción detallada del problema',
     example: 'Bache de aproximadamente 1m de diámetro y 30cm de profundidad',
   })
-  @IsString()
-  @IsNotEmpty()
   descripcion: string;
 
   @ApiProperty({
     description: 'Latitud geográfica',
     example: '19.4326018',
-    type: String,
   })
-  @IsLatitude()
-  @Transform(({ value }) => parseFloat(value).toFixed(8))
   latitud: string;
 
   @ApiProperty({
     description: 'Longitud geográfica',
     example: '-99.1332049',
-    type: String,
   })
-  @IsLongitude()
-  @Transform(({ value }) => parseFloat(value).toFixed(8))
   longitud: string;
 
   @ApiProperty({
@@ -63,16 +42,30 @@ export class CreateReportDto {
     example: 'https://ejemplo.com/bache.jpg',
     required: false,
   })
-  @IsOptional()
-  @IsUrl()
-  @MaxLength(255)
   imagen_url?: string;
 
   @ApiProperty({
-    description: 'ID del usuario que crea el reporte',
+    description: 'Estado del reporte',
+    example: 'sin_revisar',
+    enum: ['revisado', 'sin_revisar'],
+  })
+  estado: string;
+
+  @ApiProperty({
+    description: 'ID del usuario que creó el reporte',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  @IsString()
-  @IsNotEmpty()
   usuario_id: string;
+
+  @ApiProperty({
+    description: 'Fecha de creación del reporte',
+    example: '2023-05-15T12:00:00.000Z',
+  })
+  fecha_creacion: Date;
+
+  @ApiProperty({
+    description: 'Fecha de última actualización del reporte',
+    example: '2023-05-15T12:00:00.000Z',
+  })
+  fecha_actualizacion: Date;
 }

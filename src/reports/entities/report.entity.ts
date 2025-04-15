@@ -1,5 +1,5 @@
-import { reports as PrismaReporte } from '@prisma/client';
+import { reportes as PrismaReporte } from '@prisma/client';
 
 export type ReporteEntity = PrismaReporte;
 
-export type CreateReportEntity = Omit<ReporteEntity, 'id' | 'create_time'>;
+export type CreateReportEntity = Omit<ReporteEntity, 'id' | 'fecha_creacion'>;
