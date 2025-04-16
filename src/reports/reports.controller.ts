@@ -18,6 +18,7 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiNotFoundResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
@@ -26,6 +27,7 @@ import { UserActiveInterface } from 'src/common/interfaces/active-user.interface
 import { ActiveUser } from 'src/common/decorator/active-user.decorator';
 
 @Auth(Role.USER) // Los endpoints necesitan estar logueados y autentificados ademas de autorizados
+@ApiBearerAuth('JWT-auth')
 @ApiTags('Reports') // Agrupa todos los endpoints bajo el tag 'Reports'
 @Controller('reports')
 export class ReportsController {

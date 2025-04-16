@@ -11,7 +11,15 @@ async function bootstrap() {
     .setTitle('API Documentation')
     .setDescription('API description')
     .setVersion('1.0')
-    .addTag('reportes') // Puedes agregar tags para agrupar endpoints
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Ingresa tu token JWT',
+      },
+      'JWT-auth', // 🔑 Nombre de este esquema (debes usarlo luego en los controladores)
+    )
     .build();
 
   app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
