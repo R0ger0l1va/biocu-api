@@ -20,7 +20,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { Role } from 'src/common/Enum/rol.enum';
+@Auth(Role.ADMIN) //El admin es el unico capaz de gestionar los usuarios
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {

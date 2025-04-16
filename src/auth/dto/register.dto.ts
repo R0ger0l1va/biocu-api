@@ -32,7 +32,7 @@ export class RegisterUserDTO {
 
   @ApiProperty({
     description: 'Contraseña hasheada del usuario (mínimo 8 caracteres)',
-    example: '$2a$10$EjemploDeHash12345678901234567890',
+    example: 'hola',
     minLength: 8,
   })
   @IsString()
@@ -42,8 +42,8 @@ export class RegisterUserDTO {
 
   @ApiProperty({
     description: 'Indica si el usuario tiene privilegios de administrador',
-    example: false,
-    default: false,
+    example: 'user o admin',
+    default: 'user',
   })
   @IsOptional()
   @IsNotEmpty()

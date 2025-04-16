@@ -38,11 +38,12 @@ export class ReportResponseDto {
   longitud: string;
 
   @ApiProperty({
-    description: 'URL de la imagen del reporte',
-    example: 'https://ejemplo.com/bache.jpg',
+    description: 'Imágenes en formato base64',
+    example: ['data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ...'],
+    type: [String],
     required: false,
   })
-  imagen_url?: string;
+  imagenes?: string[];
 
   @ApiProperty({
     description: 'Estado del reporte',

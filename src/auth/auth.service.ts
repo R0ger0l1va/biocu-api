@@ -12,6 +12,7 @@ import { RegisterUserDTO } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { UserActiveInterface } from 'src/common/interfaces/active-user.interface';
 @Injectable()
 export class AuthService {
   private readonly SALT_ROUNDS = 10;
@@ -44,7 +45,7 @@ export class AuthService {
   }
 
   async login({ email, password }: LoginUserDto) {
-    const user = await this.usersService.findByEmail(email);
+    const user = await this.usersService.findOneByEmailWithPassword(email);
     if (!user) {
       throw new UnauthorizedException('email es incorrecto');
     }
@@ -55,13 +56,13 @@ export class AuthService {
       throw new UnauthorizedException('contraseña es incorrecta');
     }
 
-    const payload = { email: user.email, role: user.role };
+    const payload = { sub: user.id, email: user.email, role: user.role };
     const token = await this.jwtservice.signAsync(payload);
 
     return { token, email };
   }
 
-  async profile({ email, role }: { email: string; role: string }) {
-    return await this.usersService.findByEmail(email);
+  async profile(user: UserActiveInterface) {
+    return await this.usersService.findByEmail(user.email);
   }
 }

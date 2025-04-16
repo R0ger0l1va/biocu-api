@@ -10,7 +10,11 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UsuarioEntity } from './entities/user.entity';
+import {
+  LoginUsuarioEntity,
+  SafeUsuarioEntity,
+  UsuarioEntity,
+} from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { Prisma } from '@prisma/client';
 
@@ -37,9 +41,13 @@ export class UsersService {
     }
   }
 
-  findAll(): Promise<UsuarioEntity[]> {
+  findAll(): Promise<SafeUsuarioEntity[]> {
     return this.prisma.usuarios.findMany({
-      include: {
+      select: {
+        id: true,
+        nombre: true,
+        email: true,
+        role: true,
         _count: {
           select: { reportes: true },
         },
@@ -50,10 +58,14 @@ export class UsersService {
     });
   }
 
-  async findOne(id: string): Promise<UsuarioEntity> {
+  async findOne(id: string): Promise<SafeUsuarioEntity> {
     const user = await this.prisma.usuarios.findUnique({
       where: { id },
-      include: {
+      select: {
+        id: true,
+        nombre: true,
+        email: true,
+        role: true,
         reportes: {
           select: {
             titulo: true,
@@ -70,9 +82,31 @@ export class UsersService {
     return user;
   }
 
-  findByEmail(email: string): Promise<UsuarioEntity | null> {
+  findByEmail(email: string): Promise<SafeUsuarioEntity | null> {
     return this.prisma.usuarios.findUnique({
       where: { email },
+      select: {
+        id: true,
+        nombre: true,
+        email: true,
+        password_hash: true,
+        role: true,
+      },
+    });
+  }
+
+  findOneByEmailWithPassword(
+    email: string,
+  ): Promise<LoginUsuarioEntity | null> {
+    return this.prisma.usuarios.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        nombre: true,
+        email: true,
+        password_hash: true,
+        role: true,
+      },
     });
   }
 

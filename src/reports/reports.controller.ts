@@ -20,7 +20,12 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { UpdateReportDto } from './dto/update-report.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { Role } from 'src/common/Enum/rol.enum';
+import { UserActiveInterface } from 'src/common/interfaces/active-user.interface';
+import { ActiveUser } from 'src/common/decorator/active-user.decorator';
 
+@Auth(Role.USER) // Los endpoints necesitan estar logueados y autentificados ademas de autorizados
 @ApiTags('Reports') // Agrupa todos los endpoints bajo el tag 'Reports'
 @Controller('reports')
 export class ReportsController {
@@ -39,12 +44,25 @@ export class ReportsController {
     status: 400,
     description: 'Datos de entrada inválidos',
   })
-  create(@Body() createReportDto: CreateReportDto) {
-    return this.reportsService.create(createReportDto);
+  create(
+    @Body() createReportDto: CreateReportDto,
+    @ActiveUser() user: UserActiveInterface,
+  ) {
+    return this.reportsService.create(createReportDto, user);
   }
 
+  @Get('users')
+  @ApiOperation({ summary: 'Obtener todos los reportes del usuario' })
+  @ApiOkResponse({
+    description: 'Lista de reportes obtenida exitosamente',
+  })
+  findAllOfUser(@ActiveUser() user: UserActiveInterface) {
+    return this.reportsService.findAllOfUser(user);
+  }
+
+  @Auth(Role.ADMIN)
   @Get()
-  @ApiOperation({ summary: 'Obtener todos los reportes' })
+  @ApiOperation({ summary: 'Obtener todos los reportes del Sistema' })
   @ApiOkResponse({
     description: 'Lista de reportes obtenida exitosamente',
   })
@@ -53,13 +71,26 @@ export class ReportsController {
   }
 
   // En tu controlador
+  @Auth(Role.ADMIN)
   @Get(':id/reportes')
+  @ApiOperation({ summary: 'Obtener los reportes de un usuario por ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del usuario',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiOkResponse({
+    description: 'Usuario encontrado',
+  })
+  @ApiNotFoundResponse({
+    description: 'Usuario no encontrado',
+  })
   getUserReports(@Param('id') userId: string) {
     return this.reportsService.findByUser(userId);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener un reporte por ID' })
+  @ApiOperation({ summary: 'Obtener un reporte del usuario por ID' })
   @ApiParam({
     name: 'id',
     description: 'ID del reporte',
@@ -71,8 +102,8 @@ export class ReportsController {
   @ApiNotFoundResponse({
     description: 'Reporte no encontrado',
   })
-  findOne(@Param('id') id: string) {
-    return this.reportsService.findOne(id);
+  findOne(@Param('id') id: string, @ActiveUser() user: UserActiveInterface) {
+    return this.reportsService.findOne(id, user);
   }
 
   @ApiOperation({ summary: 'Actualizar un reporte por ID' })
@@ -92,8 +123,12 @@ export class ReportsController {
     description: 'Reporte no encontrado',
   })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReportDto: UpdateReportDto) {
-    return this.reportsService.update(id, updateReportDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateReportDto: UpdateReportDto,
+    @ActiveUser() user: UserActiveInterface,
+  ) {
+    return this.reportsService.update(id, updateReportDto, user);
   }
 
   @Delete(':id')
@@ -109,7 +144,28 @@ export class ReportsController {
   @ApiNotFoundResponse({
     description: 'Reporte no encontrado',
   })
-  remove(@Param('id') id: string) {
-    return this.reportsService.remove(id);
+  remove(@Param('id') id: string, @ActiveUser() user: UserActiveInterface) {
+    return this.reportsService.remove(id, user);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Cambiar el estado de un reporte por ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del reporte a cambiar el estado',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiOkResponse({
+    description: 'Estado de reporte cambiado con exito',
+  })
+  @ApiNotFoundResponse({
+    description: 'Reporte no encontrado',
+  })
+  changeReportStatus(
+    @Param('id') id: string,
+    status: 'revisado' | 'sin_revisar',
+    @ActiveUser() user: UserActiveInterface,
+  ) {
+    return this.reportsService.changeReportStatus(id, status, user);
   }
 }

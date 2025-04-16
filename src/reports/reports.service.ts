@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ReporteEntity } from './entities/report.entity';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { FileService } from 'src/file/file.service';
+import { UserActiveInterface } from 'src/common/interfaces/active-user.interface';
 
 @Injectable()
 export class ReportsService {
@@ -14,12 +13,15 @@ export class ReportsService {
     private readonly fileService: FileService,
   ) {}
 
-  async create(createReportDto: CreateReportDto): Promise<ReporteEntity> {
+  async create(
+    createReportDto: CreateReportDto,
+    user: UserActiveInterface,
+  ): Promise<ReporteEntity> {
     let images: string[] = [];
 
     if (createReportDto.imagenes && createReportDto.imagenes.length > 0) {
       images = await this.fileService.saveUserImages(
-        createReportDto.usuario_id,
+        user.sub,
         createReportDto.imagenes,
       );
     }
@@ -31,8 +33,17 @@ export class ReportsService {
         latitud: parseFloat(createReportDto.latitud),
         longitud: parseFloat(createReportDto.longitud),
         imagenes: images,
-        usuario_id: createReportDto.usuario_id,
+        usuario_id: user.sub,
         estado: 'sin_revisar', // Estado por defecto
+      },
+    });
+  }
+
+  findAllOfUser(user: UserActiveInterface): Promise<ReporteEntity[]> {
+    return this.prisma.reportes.findMany({
+      where: { usuario_id: user.sub },
+      orderBy: {
+        fecha_creacion: 'desc',
       },
     });
   }
@@ -43,7 +54,6 @@ export class ReportsService {
         usuarios: {
           select: {
             nombre: true,
-            email: true,
           },
         },
       },
@@ -53,17 +63,12 @@ export class ReportsService {
     });
   }
 
-  async findOne(id: string): Promise<ReporteEntity | null> {
+  async findOne(
+    id: string,
+    user: UserActiveInterface,
+  ): Promise<ReporteEntity | null> {
     const reporte = await this.prisma.reportes.findUnique({
-      where: { id },
-      include: {
-        usuarios: {
-          select: {
-            nombre: true,
-            email: true,
-          },
-        },
-      },
+      where: { id, usuario_id: user.sub },
     });
 
     if (!reporte) {
@@ -76,11 +81,12 @@ export class ReportsService {
   async update(
     id: string,
     updateReportDto: UpdateReportDto,
+    user: UserActiveInterface,
   ): Promise<ReporteEntity> {
-    await this.findOne(id); // Verifica que el reporte exista
+    await this.findOne(id, user); // Verifica que el reporte exista
 
     return this.prisma.reportes.update({
-      where: { id },
+      where: { id, usuario_id: user.sub },
       data: {
         titulo: updateReportDto.titulo,
         direccion: updateReportDto.direccion,
@@ -96,11 +102,11 @@ export class ReportsService {
     });
   }
 
-  async remove(id: string): Promise<ReporteEntity> {
-    await this.findOne(id); // Verifica que el reporte exista
+  async remove(id: string, user: UserActiveInterface): Promise<ReporteEntity> {
+    await this.findOne(id, user); // Verifica que el reporte exista
 
     return this.prisma.reportes.delete({
-      where: { id },
+      where: { id, usuario_id: user.sub },
     });
   }
 
@@ -116,11 +122,12 @@ export class ReportsService {
   async changeReportStatus(
     id: string,
     status: 'revisado' | 'sin_revisar',
+    user: UserActiveInterface,
   ): Promise<ReporteEntity> {
-    await this.findOne(id); // Verifica que el reporte exista
+    await this.findOne(id, user); // Verifica que el reporte exista
 
     return this.prisma.reportes.update({
-      where: { id },
+      where: { id, usuario_id: user.sub },
       data: { estado: status },
     });
   }
