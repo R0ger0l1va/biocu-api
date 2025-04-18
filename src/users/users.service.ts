@@ -89,7 +89,6 @@ export class UsersService {
         id: true,
         nombre: true,
         email: true,
-        password_hash: true,
         role: true,
       },
     });
