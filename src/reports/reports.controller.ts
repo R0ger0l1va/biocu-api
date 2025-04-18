@@ -111,7 +111,7 @@ export class ReportsController {
   @ApiOperation({ summary: 'Actualizar un reporte por ID' })
   @ApiBody({
     type: CreateReportDto,
-    description: 'Datos necesarios para crear un nuevo reporte',
+    description: 'Datos necesarios para actualizar un reporte',
   })
   @ApiParam({
     name: 'id',
@@ -124,7 +124,7 @@ export class ReportsController {
   @ApiNotFoundResponse({
     description: 'Reporte no encontrado',
   })
-  @Patch(':id')
+  @Patch(':id/modify')
   update(
     @Param('id') id: string,
     @Body() updateReportDto: UpdateReportDto,
@@ -133,7 +133,7 @@ export class ReportsController {
     return this.reportsService.update(id, updateReportDto, user);
   }
 
-  @Delete(':id')
+  @Delete(':id/delete')
   @ApiOperation({ summary: 'Eliminar un reporte por ID' })
   @ApiParam({
     name: 'id',
@@ -150,7 +150,8 @@ export class ReportsController {
     return this.reportsService.remove(id, user);
   }
 
-  @Patch(':id')
+  @Auth(Role.ADMIN)
+  @Patch(':id/status')
   @ApiOperation({ summary: 'Cambiar el estado de un reporte por ID' })
   @ApiParam({
     name: 'id',
@@ -163,11 +164,7 @@ export class ReportsController {
   @ApiNotFoundResponse({
     description: 'Reporte no encontrado',
   })
-  changeReportStatus(
-    @Param('id') id: string,
-    status: 'revisado' | 'sin_revisar',
-    @ActiveUser() user: UserActiveInterface,
-  ) {
-    return this.reportsService.changeReportStatus(id, status, user);
+  changeReportStatus(@Param('id') id: string) {
+    return this.reportsService.changeReportStatus(id);
   }
 }

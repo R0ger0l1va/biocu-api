@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ReporteEntity } from './entities/report.entity';
+import {
+  ModifyReportEntityStatus,
+  ReporteEntity,
+} from './entities/report.entity';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { FileService } from 'src/file/file.service';
@@ -78,6 +81,18 @@ export class ReportsService {
     return reporte;
   }
 
+  async findOneWithoutUser(id: string): Promise<ReporteEntity | null> {
+    const reporte = await this.prisma.reportes.findUnique({
+      where: { id },
+    });
+
+    if (!reporte) {
+      throw new NotFoundException(`Reporte con ID ${id} no encontrado`);
+    }
+
+    return reporte;
+  }
+
   async update(
     id: string,
     updateReportDto: UpdateReportDto,
@@ -119,16 +134,19 @@ export class ReportsService {
     });
   }
 
-  async changeReportStatus(
-    id: string,
-    status: 'revisado' | 'sin_revisar',
-    user: UserActiveInterface,
-  ): Promise<ReporteEntity> {
-    await this.findOne(id, user); // Verifica que el reporte exista
+  async changeReportStatus(id: string): Promise<ModifyReportEntityStatus> {
+    const reporte = await this.findOneWithoutUser(id); // Verifica que el reporte exista
+
+    const nuevoEstado =
+      reporte?.estado === 'sin_revisar' ? 'revisado' : 'sin_revisar';
 
     return this.prisma.reportes.update({
-      where: { id, usuario_id: user.sub },
-      data: { estado: status },
+      where: { id },
+      data: { estado: nuevoEstado },
+      select: {
+        id: true,
+        estado: true,
+      },
     });
   }
 }
