@@ -8,6 +8,7 @@ import {
   ApiBody,
   ApiResponse,
   ApiTags,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { Role } from '../common/Enum/rol.enum';
 import { Auth } from './decorators/auth.decorator';
@@ -16,6 +17,7 @@ import { UserActiveInterface } from 'src/common/interfaces/active-user.interface
 
 @ApiTags('Auth')
 @Controller('auth')
+@ApiBearerAuth('JWT-auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -42,7 +44,7 @@ export class AuthController {
   }
 
   @Get('profile')
-  @Auth(Role.ADMIN)
+  @Auth(Role.USER)
   profile(@ActiveUser() user: UserActiveInterface) {
     console.log(user);
     return this.authService.profile(user);
