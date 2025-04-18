@@ -69,10 +69,6 @@ export class CreateReportDto {
   @IsBase64({}, { each: true })
   imagenes?: string[];
 
-  @ApiProperty({
-    description: 'ID del usuario que crea el reporte',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-  })
   @IsString()
   @IsNotEmpty()
   usuario_id: string;

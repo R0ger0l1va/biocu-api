@@ -53,12 +53,6 @@ export class ReportResponseDto {
   estado: string;
 
   @ApiProperty({
-    description: 'ID del usuario que creó el reporte',
-    example: '550e8400-e29b-41d4-a716-446655440000',
-  })
-  usuario_id: string;
-
-  @ApiProperty({
     description: 'Fecha de creación del reporte',
     example: '2023-05-15T12:00:00.000Z',
   })
