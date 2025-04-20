@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-binary-expression */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -20,9 +21,15 @@ async function bootstrap() {
       },
       'JWT-auth', // 🔑 Nombre de este esquema (debes usarlo luego en los controladores)
     )
+    .addServer(process.env.API_BASE_URL || 'http://localhost:3000')
     .build();
 
   app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
+
+  app.enableCors({
+    origin: '*', // O restringe a tu frontend: ['https://tufrontend.com']
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  });
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
