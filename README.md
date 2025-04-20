@@ -102,6 +102,14 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 DATABASE_URL="postgresql://postgres:hola@localhost:5432/biocu_database"
 
+# Configuración de Gmail
+
+GMAIL_HOST = smtp.gmail.com
+GMAIL_PORT = 587
+GMAIL_USER=bcsrvcgml@gmail.com
+GMAIL_APP_PASSWORD=vpnhtakckswysqun
+
+
 ## POST/reports para prueba
 
 {
