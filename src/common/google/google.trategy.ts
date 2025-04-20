@@ -11,9 +11,9 @@ import { ConfigService } from '@nestjs/config';
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(private readonly configService: ConfigService) {
     super({
-      clientID: configService.get('GOOGLE_WEB_CLIENT_ID'),
-      clientSecret: configService.get('GOOGLE_WEB_SECRET_CLIENT_ID'),
-      callbackURL: configService.get('GOOGLE_WEB_URI_REDIRECT'),
+      clientID: process.env.GOOGlE_WEB_CLIENT_ID,
+      clientSecret: process.env.GOOGlE_WEB_SECRET_CLIENT_ID,
+      callbackURL: process.env.GOOGLE_WEB_URI_REDIRECT,
       scope: ['email', 'profile'],
     });
   }
