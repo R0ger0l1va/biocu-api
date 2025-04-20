@@ -5,9 +5,13 @@ export type UsuarioEntity = PrismaUsuarios;
 export type CreateUserEntity = Omit<UsuarioEntity, 'id' | 'fecha_creacion'>;
 export type SafeUsuarioEntity = Omit<
   UsuarioEntity,
-  'password_hash' | 'fecha_actualizacion' | 'fecha_creacion'
+  | 'password_hash'
+  | 'fecha_actualizacion'
+  | 'fecha_creacion'
+  | 'resetToken'
+  | 'resetTokenExpiry'
 >;
 export type LoginUsuarioEntity = Omit<
   UsuarioEntity,
-  'fecha_creacion' | 'fecha_actualizacion'
+  'fecha_creacion' | 'fecha_actualizacion' | 'resetToken' | 'resetTokenExpiry'
 >;

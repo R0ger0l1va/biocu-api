@@ -32,4 +32,6 @@ model usuarios {
   fecha_creacion      DateTime?  @default(now()) @db.Timestamp(6)
   fecha_actualizacion DateTime?  @default(now()) @db.Timestamp(6)
   reportes            reportes[]
+  resetToken          String?
+  resetTokenExpiry    DateTime?
 }
