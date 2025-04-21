@@ -21,6 +21,8 @@ model reportes {
   fecha_actualizacion DateTime? @default(now()) @db.Timestamp(6)
   imagenes            String[]  @db.VarChar(255)
   usuarios            usuarios  @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("reportes")
 }
 
 model usuarios {
@@ -31,7 +33,9 @@ model usuarios {
   role                String     @default("user") @db.VarChar(255)
   fecha_creacion      DateTime?  @default(now()) @db.Timestamp(6)
   fecha_actualizacion DateTime?  @default(now()) @db.Timestamp(6)
-  reportes            reportes[]
   resetToken          String?
   resetTokenExpiry    DateTime?
+  reportes            reportes[]
+
+  @@map("usuarios")
 }
