@@ -104,8 +104,8 @@ export class ReportsController {
   @ApiNotFoundResponse({
     description: 'Reporte no encontrado',
   })
-  findOne(@Param('id') id: string, @ActiveUser() user: UserActiveInterface) {
-    return this.reportsService.findOne(id, user);
+  findOne(@Param('id') id: string) {
+    return this.reportsService.findOne(id);
   }
 
   @ApiOperation({ summary: 'Actualizar un reporte por ID' })
@@ -146,8 +146,8 @@ export class ReportsController {
   @ApiNotFoundResponse({
     description: 'Reporte no encontrado',
   })
-  remove(@Param('id') id: string, @ActiveUser() user: UserActiveInterface) {
-    return this.reportsService.remove(id, user);
+  remove(@Param('id') id: string) {
+    return this.reportsService.remove(id);
   }
 
   @Auth(Role.ADMIN)

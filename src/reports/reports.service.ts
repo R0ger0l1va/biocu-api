@@ -66,12 +66,9 @@ export class ReportsService {
     });
   }
 
-  async findOne(
-    id: string,
-    user: UserActiveInterface,
-  ): Promise<ReporteEntity | null> {
+  async findOne(id: string): Promise<ReporteEntity | null> {
     const reporte = await this.prisma.reportes.findUnique({
-      where: { id, usuario_id: user.sub },
+      where: { id },
     });
 
     if (!reporte) {
@@ -98,7 +95,7 @@ export class ReportsService {
     updateReportDto: UpdateReportDto,
     user: UserActiveInterface,
   ): Promise<ReporteEntity> {
-    await this.findOne(id, user); // Verifica que el reporte exista
+    await this.findOne(id); // Verifica que el reporte exista
 
     return this.prisma.reportes.update({
       where: { id, usuario_id: user.sub },
@@ -117,11 +114,11 @@ export class ReportsService {
     });
   }
 
-  async remove(id: string, user: UserActiveInterface): Promise<ReporteEntity> {
-    await this.findOne(id, user); // Verifica que el reporte exista
+  async remove(id: string): Promise<ReporteEntity> {
+    await this.findOne(id); // Verifica que el reporte exista
 
     return this.prisma.reportes.delete({
-      where: { id, usuario_id: user.sub },
+      where: { id },
     });
   }
 
