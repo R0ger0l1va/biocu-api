@@ -7,6 +7,9 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.use(express.json({ limit: '20mb' }));
+  app.use(express.urlencoded({ limit: '20mb', extended: true }));
+
   const config = new DocumentBuilder()
     .setTitle('API Documentation')
     .setDescription('API description')
