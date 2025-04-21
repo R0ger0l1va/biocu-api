@@ -1,4 +1,3 @@
-/* eslint-disable no-constant-binary-expression */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -29,6 +28,7 @@ async function bootstrap() {
   app.enableCors({
     origin: '*', // O restringe a tu frontend: ['https://tufrontend.com']
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    permission: false,
   });
 
   const document = SwaggerModule.createDocument(app, config);

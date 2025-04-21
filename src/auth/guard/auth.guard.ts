@@ -22,10 +22,8 @@ export class AuthGuard implements CanActivate {
     }
     //Verificacion del token si es valido o no para la proteccion de los endpoints
     try {
-      const paylod = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET,
-      });
-      request['user'] = paylod;
+      const paylod = await this.jwtService.verifyAsync(token);
+      request.user = paylod;
     } catch {
       throw new UnauthorizedException();
     }
@@ -34,7 +32,8 @@ export class AuthGuard implements CanActivate {
   }
   //Extraer el token del header separando el Bearer en type y el token
   private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+    const authHeader = request.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) return undefined;
+    return authHeader.split(' ')[1]; // Extrae solo el token
   }
 }
