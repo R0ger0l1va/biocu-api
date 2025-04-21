@@ -16,7 +16,7 @@ import { GoogleStrategy } from 'src/common/google/google.trategy';
     ConfigModule,
     JwtModule.register({
       global: true,
-      secret: jwtConstants.secret,
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
   ],
