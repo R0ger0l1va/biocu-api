@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
@@ -8,7 +7,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { jwtConstants } from '../constants/jwt-constant';
 import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -24,7 +22,7 @@ export class AuthGuard implements CanActivate {
     //Verificacion del token si es valido o no para la proteccion de los endpoints
     try {
       const paylod = await this.jwtService.verifyAsync(token, {
-        secret: jwtConstants.secret,
+        secret: process.env.JWT_SECRET,
       });
       request['user'] = paylod;
     } catch {
