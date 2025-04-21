@@ -28,7 +28,7 @@ async function bootstrap() {
   app.enableCors({
     origin: '*', // O restringe a tu frontend: ['https://tufrontend.com']
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    permission: false,
+    allowedHeaders: ['Authorization', 'Content-Type'],
   });
 
   const document = SwaggerModule.createDocument(app, config);
